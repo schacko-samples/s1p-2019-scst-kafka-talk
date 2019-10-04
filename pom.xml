@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>s1p2019.scst.kafka.talk</groupId>
+    <artifactId>s1p-2019-scst-kafka-talk</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>s1p-2019-scst-kafka-talk</name>
+    <description>Demo apps used for s1p 2010 ScSt Kafka talk</description>
+
+    <modules>
+        <module>kafka-streams-word-count</module>
+    </modules>
+
+</project>

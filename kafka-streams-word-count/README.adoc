@@ -1,0 +1,40 @@
+== What is this app?
+
+This is an example of a Spring Cloud Stream processor using Kafka Streams support.
+
+The example is based on the word count application from the https://github.com/confluentinc/examples/blob/3.2.x/kafka-streams/src/main/java/io/confluent/examples/streams/WordCountLambdaExample.java[reference documentation].
+It is written using Spring Cloud Stream binder for Kafka Streams using java.util.function.Function to represent a processor.
+It uses a single input and a single output.
+In essence, the application receives text messages from an input topic and computes word occurrence counts in a configurable time window and report that in an output topic.
+
+=== Running the app:
+
+Ensure that you are at the root of kafka-streams-word-count project.
+
+`docker-compose up -d` (You can skip it, if you already have Kafka running)
+
+`./mvnw clean package`
+
+`java -jar target/kafka-streams-word-count-0.0.1-SNAPSHOT.jar`
+
+Assuming you are running the dockerized Kafka cluster as above.
+
+Issue the following commands:
+
+`docker exec -it kafka-wordcount /opt/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic words`
+
+On another terminal:
+
+`docker exec -it kafka-wordcount /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic counts`
+
+Enter some text in the console producer and watch the output in the console consumer.
+
+Accessing Metrics:
+
+`curl localhost:8080/actuator/metrics`
+
+Query the metrics you are interested in. For e.g. if you want to know the total commits by the stream so far.
+
+`curl localhost:8080/actuator/metrics/stream.metrics.commit.total`
+
+Once you are done, stop the application and Kafka cluster: `docker-compose down`
