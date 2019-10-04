@@ -1,9 +1,10 @@
 == Collection of apps used for demo at the ScSt Kafka talk at S1P 2019
 
-All the apps are standalone Spring Boot applications. For building and running the apps, please go to the individual app's folder and see the README there.
+All the apps in this repository are standalone Spring Boot applications.
+For build and running instructions, please go to the individual app's folder and see the README.
 
-Classic word count application written using Spring Cloud Stream functional programming model for Kafka Streams.
-You can find the README here.
+1. Classic word count application written using Spring Cloud Stream functional programming model for Kafka Streams.
+For more information, see this README: https://github.com/schacko-samples/s1p-2019-scst-kafka-talk/blob/master/kafka-streams-word-count/README.adoc
 
 
 
