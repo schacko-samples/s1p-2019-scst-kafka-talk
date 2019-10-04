@@ -24,9 +24,7 @@ import java.util.function.Function;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.TimeWindows;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -50,9 +48,10 @@ public class KafkaStreamsWordCountApplication {
 					.map((key, value) -> new KeyValue<>(value, value))
 					.groupByKey()
 					.windowedBy(TimeWindows.of(Duration.ofSeconds(WINDOW_SIZE_SECONDS)))
-					.count(Materialized.as("WordCounts-1"))
+					.count()
 					.toStream()
-					.map((key, value) -> new KeyValue<>(null, new WordCount(key.key(), value, new Date(key.window().start()), new Date(key.window().end()))));
+					.map((key, value) -> new KeyValue<>(null,
+							new WordCount(key.key(), value, new Date(key.window().start()), new Date(key.window().end()))));
 		}
 	}
 
