@@ -1,0 +1,73 @@
+== What is this app?
+
+This is an example of a Spring Cloud Stream processor using Kafka Streams support that shows both KStream and KTable bindings.
+
+It uses java.util.function.BiFunction to demonstrate two inputs and an output.
+The processor consumes user region data as `KTable` and then user clicks information as `KStream`.
+Then it produces the clicks per region info on the outbound.
+The same outbound information is stored in a state store as well to demonstrate interactive query capabilities of Kafka Streams exposed as `IteractiveQueryService` in Spring Cloud Stream.
+
+The application also has a second processor to listen from the outbound topic to log the information.
+In addition, the application also exposes a REST endpoint, using which the user clicks data per region can be queried.
+
+=== Running the app:
+
+From the root of the repo: `docker-compose up -d` (You can skip it, if you already have Kafka running)
+
+Running the app from an IDE.
+
+Run `UserClicksPerRegionApplication` from an IDEa
+
+If you want to run it from the CLI:
+
+```
+cd user-clicks-per-region
+./mvnw clean package
+java -jar target/user-clicks-per-region-0.0.1-SNAPSHOT.jar
+```
+
+Run the producer to generate data:
+
+Run `UserClicksRegionProducerApplication` from an IDE (or from CLI).
+This application has two REST endpoints that allow you to publish user-region and user-click information to Kafka topics.
+
+First enter some data for user region.
+
+`curl -X POST localhost:8090/user-region/alice/asia`
+
+At this point, Alice lives in Asia.
+
+Now send some click impression data from Alice.
+
+`curl -X POST localhost:8090/user-clicks/alice/12`
+
+Watch the console of the `UserClicksPerRegionApplication` and see that the clicks per region information is logged from the test processor.
+
+Invoke the REST endpoint to extract this same information through an interactive query.
+
+`curl localhost:8080/updates/asia`
+
+Enter more POST data as above and verify that you see the correct output.
+
+This application is also enabled with DLQ for records that failed inbound deserialization.
+Let's verify its behavior.
+
+The main processor takes `Long` value for user clicks. If you send any other type of data, the deserialization will fail.
+Send some text data instead of `Long`.
+
+`kafkacat -b localhost:9092 -t user-clicks -P -K:`
+
+See the message on the application console.
+
+You can consume messages on the default DLQ topic created by the application as below:
+
+```
+kafkacat -b localhost:9092 -t error.user-clicks.user-clicks-per-region -f 'Key: %k\nValue:%s\n'
+```
+
+Or
+
+```
+docker exec -it kafka-wordcount /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic error.user-clicks.user-clicks-per-region --property print.key=true --property key.separator="-"
+```
+

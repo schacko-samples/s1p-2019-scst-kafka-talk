@@ -23,9 +23,17 @@ Issue the following commands:
 
 `docker exec -it kafka-wordcount /opt/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic words`
 
+Or if you prefer `kafkacat`:
+
+`kafkacat -b localhost:9092 -t words -P`
+
 On another terminal:
 
 `docker exec -it kafka-wordcount /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic counts`
+
+Or if you prefer `kafkacat`:
+
+`kafkacat -b localhost:9092 -t counts`
 
 Enter some text in the console producer and watch the output in the console consumer.
 

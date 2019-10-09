@@ -10,6 +10,8 @@
 
     <modules>
         <module>kafka-streams-word-count</module>
+        <module>user-clicks-per-region</module>
+        <module>user-clicks-region-producer</module>
     </modules>
 
 </project>
