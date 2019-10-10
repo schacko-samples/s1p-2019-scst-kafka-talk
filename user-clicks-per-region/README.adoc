@@ -16,7 +16,7 @@ From the root of the repo: `docker-compose up -d` (You can skip it, if you alrea
 
 Running the app from an IDE.
 
-Run `UserClicksPerRegionApplication` from an IDEa
+Run `UserClicksPerRegionApplication` from an IDE.
 
 If you want to run it from the CLI:
 
@@ -68,6 +68,6 @@ kafkacat -b localhost:9092 -t error.user-clicks.user-clicks-per-region -f 'Key: 
 Or
 
 ```
-docker exec -it kafka-wordcount /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic error.user-clicks.user-clicks-per-region --property print.key=true --property key.separator="-"
+docker exec -it s1p-kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic error.user-clicks.user-clicks-per-region --property print.key=true --property key.separator="-"
 ```
 

@@ -3,10 +3,21 @@
 All the apps in this repository are standalone Spring Boot applications.
 For build and running instructions, please go to the individual app's folder and see the README.
 
+All the applications require a local instance of Kafka running.
+For convenience, there is a docker-compose script provided at the root of this repository which you can run as below:
+
+`docker-compose up -d` (You can skip it, if you already have Kafka running)
+
+=== Below are the listing of all the apps
+
 1. Classic word count application written using Spring Cloud Stream functional programming model for Kafka Streams.
 For more information, see this README: https://github.com/schacko-samples/s1p-2019-scst-kafka-talk/blob/master/kafka-streams-word-count/README.adoc
 
+2. User clicks per region application written using Spring Cloud Stream.
+Here is the README: https://github.com/schacko-samples/s1p-2019-scst-kafka-talk/blob/master/user-clicks-per-region/README.adoc
 
+3. User region/clicks test data producer app.
 
+4. Classic uppercase app using Spring Cloud Stream/Spring Cloud Function.
 
 

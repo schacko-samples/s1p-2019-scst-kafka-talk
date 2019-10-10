@@ -2,7 +2,7 @@ version: '3'
 services:
     kafka:
       image: wurstmeister/kafka
-      container_name: kafka-wordcount
+      container_name: s1p-kafka
       ports:
         - "9092:9092"
       environment:

@@ -1,8 +1,8 @@
 spring.cloud.stream:
   bindings:
-    input:
+    process-in-0:
       destination: words
-    output:
+    process-out-0:
       destination: counts
   kafka:
     streams:

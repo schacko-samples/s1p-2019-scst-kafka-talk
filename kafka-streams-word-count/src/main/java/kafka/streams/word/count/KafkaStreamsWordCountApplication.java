@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.function.Function;
 
-import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.TimeWindows;
@@ -41,7 +40,7 @@ public class KafkaStreamsWordCountApplication {
 		static final int WINDOW_SIZE_SECONDS = 30;
 
 		@Bean
-		public Function<KStream<Bytes, String>, KStream<Bytes, WordCount>> process() {
+		public Function<KStream<Object, String>, KStream<Object, WordCount>> process() {
 
 			return input -> input
 					.flatMapValues(value -> Arrays.asList(value.toLowerCase().split("\\W+")))

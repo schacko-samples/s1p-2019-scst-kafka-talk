@@ -73,7 +73,6 @@ public class UserClicksPerRegionApplication {
 				QueryableStoreTypes.keyValueStore());
 		final Long clicks = (Long)queryableStore.get(region);
 		return new RegionWithClicks(region, clicks);
-
 	}
 
 	/**

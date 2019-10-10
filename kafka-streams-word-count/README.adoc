@@ -9,9 +9,9 @@ In essence, the application receives text messages from an input topic and compu
 
 === Running the app:
 
-Ensure that you are at the root of kafka-streams-word-count project.
+From the root of the repo: `docker-compose up -d` (You can skip it, if you already have Kafka running)
 
-`docker-compose up -d` (You can skip it, if you already have Kafka running)
+Ensure that you are at the root of kafka-streams-word-count project.
 
 `./mvnw clean package`
 
@@ -21,7 +21,7 @@ Assuming you are running the dockerized Kafka cluster as above.
 
 Issue the following commands:
 
-`docker exec -it kafka-wordcount /opt/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic words`
+`docker exec -it s1p-kafka /opt/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic words`
 
 Or if you prefer `kafkacat`:
 
@@ -29,7 +29,7 @@ Or if you prefer `kafkacat`:
 
 On another terminal:
 
-`docker exec -it kafka-wordcount /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic counts`
+`docker exec -it s1p-kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic counts`
 
 Or if you prefer `kafkacat`:
 
