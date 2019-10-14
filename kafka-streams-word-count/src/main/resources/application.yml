@@ -14,10 +14,13 @@ spring.cloud.stream:
           value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
 #Enable metrics
 management:
+  endpoint:
+    health:
+      show-details: ALWAYS
   endpoints:
     web:
       exposure:
-        include: metrics
+        include: metrics,health
 #Enable logging to debug for spring kafka config
 logging:
   level:
