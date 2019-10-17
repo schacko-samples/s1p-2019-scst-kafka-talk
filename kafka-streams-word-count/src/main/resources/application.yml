@@ -1,9 +1,17 @@
 spring.cloud.stream:
   bindings:
-    process-in-0:
+    process1-in-0:
       destination: words
-    process-out-0:
+    process1-out-0:
       destination: counts
+    process2-in-0:
+      destination: words
+    process2-out-0:
+      destination: counts
+
+  kafka.streams.bindings.process1-in-0.consumer.application-id: process1-${random.int}
+  kafka.streams.bindings.process2-in-0.consumer.application-id: process2-${random.int}
+  
   kafka:
     streams:
       binder:
