@@ -40,7 +40,7 @@ public class KafkaStreamsWordCountApplication {
 		static final int WINDOW_SIZE_SECONDS = 30;
 
 		@Bean
-		public Function<KStream<Object, String>, KStream<Object, WordCount>> process() {
+		public Function<KStream<Object, String>, KStream<Object, WordCount>> process1() {
 
 			return input -> input
 					.flatMapValues(value -> Arrays.asList(value.toLowerCase().split("\\W+")))
@@ -52,6 +52,21 @@ public class KafkaStreamsWordCountApplication {
 					.map((key, value) -> new KeyValue<>(null,
 							new WordCount(key.key(), value, new Date(key.window().start()), new Date(key.window().end()))));
 		}
+
+		@Bean
+		public Function<KStream<Object, String>, KStream<Object, WordCount>> process2() {
+
+			return input -> input
+					.flatMapValues(value -> Arrays.asList(value.toLowerCase().split("\\W+")))
+					.map((key, value) -> new KeyValue<>(value, value))
+					.groupByKey()
+					.windowedBy(TimeWindows.of(Duration.ofSeconds(WINDOW_SIZE_SECONDS)))
+					.count()
+					.toStream()
+					.map((key, value) -> new KeyValue<>(null,
+							new WordCount(key.key(), value, new Date(key.window().start()), new Date(key.window().end()))));
+		}
+
 	}
 
 	static class WordCount {
