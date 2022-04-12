@@ -25,7 +25,7 @@ Then it publishes random text data to this topic using `KafkaTemplate` and then 
 `KafkaTemplate` and all its necessary components such as the `ProducerFactory` are auto-configured through Spring Boot.
 Similarly, `KafkaListener` uses the standard `ConcurrentKafkaMessageListenerContainer` auto-configured through Spring Boot.
 
-The application uses the https://github.com/DiUS/java-faker[Java Faker] library to generate 100 random Book information with a one-second delay.
+The application uses the https://github.com/DiUS/java-faker[Java Faker] library to generate 100 random Book recommendations with a one-second delay.
 The listener simply consumes the records and prints them on the console.
 
 === spring-kafka-app1 - Advanced application with two publishers and listeners with initial assignment
