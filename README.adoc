@@ -17,24 +17,24 @@ For convenience, we provide a docker-compose script, that allows you to run a th
 This repository contains several standalone demo applications.
 Navigate to the README on each application for more details.
 
-=== spring-kafka-app0 - Basic Application to Publish and Consume Text Based Records
+=== https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-kafka-app0/src/main/java/app0/SpringKafkaApp0.java[spring-kafka-app0 - Basic Application to Publish and Consume Text Based Records]
 
 This application creates a Kafka topic named `spring-kafka-app0-demo1` with a single partition.
 Then it publishes random text data to this topic using `KafkaTemplate` and then consumes them using a `KafkaListener`.
 
 `KafkaTemplate` and all its necessary components such as the `ProducerFactory` are auto-configured through Spring Boot.
-Similarly, `KafkaListener` uses the standard `ConcurrentKafkaMessageListenerContainer` auto-configured through Spring Boot.
+`KafkaListener` relies on a `ConcurrnetKafkaListenerContainerFactory` auto-configured through Boot to create its message listener container.
 
 The application uses the https://github.com/DiUS/java-faker[Java Faker] library to generate 100 random Book recommendations with a one-second delay.
 The listener simply consumes the records and prints them on the console.
 
-=== spring-kafka-app1 - Advanced application with two publishers and listeners with initial assignment
+=== https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-kafka-app1/src/main/java/app1/SpringKafkaApp1.java[spring-kafka-app1 - Advanced application with two publishers and listeners with initial assignment]
 
 In this application, we have two publishers both using custom `KafkaTemplate` beans.
 One `KafkaTemplate` uses `Long` as key type and the other one uses `UUID`, while both of them use `String` as value type.
 The publishers are initiated using REST endpoints.
 
-App creates two Kafka topics - `spring-kafka-app1-demo1` and `spring-kafka-app1-demo2` both with 10 partitions.
+Application creates two Kafka topics - `spring-kafka-app1-demo1` and `spring-kafka-app1-demo2` both with 10 partitions.
 
 Two listeners are provided using `KafkaListener`.
 The first listener uses, `TopicPartition` and `PartitionOffset` annotations to control selective partitions and initial assignments on them.
@@ -49,9 +49,9 @@ curl -X POST  http://localhost:8080/publish/demo2
 ```
 
 The first command invokes the first publisher that publishes to topic `spring-kafka-app1-demo1` and the second one for the topic `spring-kafka-app1-demo2`.
-Listeners log the data received on the console with the key, partition and offset it received from.
+Listeners log the data received on the console with the key, partition and offset received from.
 
-=== spring-kafka-app2 - JsonSerializer and JsonDeserializer in action
+=== https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-kafka-app2/src/main/java/app2/SpringKafkaApp2.java[spring-kafka-app2 - JsonSerializer and JsonDeserializer in action]
 
 In this app, we use a POJO for publishing and consuming using the `JsonSerializer` and `JsonDeserializer` from Spring for Apache Kafka.
 
@@ -60,23 +60,25 @@ It publishes a domain object `Foo` into the topic and then consumes it using a `
 
 Take a look at the `application.properties` configuration file for seeing how the serializer/deserializer properties are configured.
 
-=== spring-kafka-app3 - Seeking to specific offsets
+=== https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-kafka-app3/src/main/java/app3/SpringKafkaApp3.java[spring-kafka-app3 - Seeking to specific offsets]
 
 In this application, we have a publisher and a listener.
 The listener extends from `AbstractConsumerSeekAware` which implements `ConsumerSeekAware`.
 App creates a topic named `spring-kafka-app3-demo` with a single partition.
 
 Each time the listener starts, we always seek the partition to offset 20.
-The publisher sends 100 records when the app starts.
+The publisher sends 100 records each time when the app starts.
 
-=== spring-kafka-app4 - Error Handling
+=== https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-kafka-app4/src/main/java/app4/SpringKafkaApp4.java[spring-kafka-app4 - Error Handling]
 
-This application demonstrates how container error handling work in Spring for Apache Kafka.
+This application demonstrates how container error handling works in Spring for Apache Kafka.
 The application has a publisher which is invoked through a REST endpoint.
 Each time the REST endpoint is called, the publisher sends 10 records to the topic `spring-kafka-app4-demo`.
+
+
 On the consumer side, we have a contrived logic for throwing an exception for each time the offset is > 0 and divisible by 10.
 By default, when the exception happens, the `DefaultErrorHandler` will kick in with 10 maximum tries without any backoff.
-Now, uncomment the code in the `Listener` class
+Now, uncomment the code in the `Listener` class.
 This code will create a custom `DefaultErrorHandler` which the boot autoconfiguration picks up and configure with the container factory.
 The custom handler will re-try for a maximum of 3 times with a two seconds backoff each time.
 The handler also is configured with a `DeadLetterPublishingRecoverer` which sends the record in error to a default DLT topic.
@@ -89,7 +91,7 @@ In order to exercise the app, run it first and then issue the following CURL com
 curl -X POST  http://localhost:8080/publish
 ```
 
-=== spring-kafka-app5 - ErrorHandlingDeserializer
+=== https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-kafka-app5/src/main/java/app5/SpringKafkaApp5.java[spring-kafka-app5 - ErrorHandlingDeserializer]
 
 This application demonstrates the `ErrorHandlingDeserializer` in action.
 We have a publisher that sends data as `String`, but the consumer expects an `Integer`, thus it causes a deserialization error.
@@ -100,16 +102,18 @@ Since deserialization exceptions are not retried by default, the `DefaultErrorHa
 We configure the error handler with a `DeadLetterPublishingRecoverer` for the records in error to be sent.
 The application provides a convenient `KafkaListener` to consumer from the DLT topic (`spring-kafka-app5-demo.DLT`).
 
-=== spring-kafka-app6 - Request-Reply using ReplyingKafkaTemplate
+=== https://github.com/schacko-samples/kafka-summit-london-2022/tree/main/spring-kafka-app6/src/main/java/app6[spring-kafka-app6 - Request-Reply using ReplyingKafkaTemplate]
 
-In this application we see how the request-reply semantics is made possible using the `ReplyingKafkaTemplate`.
+In this application we see how the request-reply semantics works in Spring for Apache Kafka using the `ReplyingKafkaTemplate`.
 There are two packages given - app6.request and app6.reply.
 The applications rely on two Kafka topics - `kRequests` and `kReplies`.
 Using the `ReplyingKafkaTemplate`, the request application sends a message to the topic `kRequests` and wait for the reply by blocking on the reply future.
 The `ReplyingKafkaTemplate` is configured with a reply container that specifies the reply topic (`kReplies`) to wait on.
+
+
 On the replies side, another application is provided that has a `KafkaListener` that listens on the topic where the requests are sent (`kRequests`).
-Once the listener receives data, the listener converts the text to uppercase and then echo it back to the reply topic.
-When doing so, it also adds the proper CORRELATION_ID it received as part of the request, so that the listen on the request side (in `ReplyingKafkaTemplate`) can properly discover it.
+Once the listener receives data, the listener converts the text to uppercase and then echoes it back to the reply topic.
+When doing so, it also adds the proper CORRELATION_ID it received as part of the request, so that the listener on the request side (in `ReplyingKafkaTemplate`) can properly discover it.
 
 In order to run the app, do the following.
 
@@ -123,15 +127,15 @@ curl -X POST -H "Content-Type: text/plain" --data "hello request-reply in Spring
 
 On the console output on the request application, you should see the received text.
 
-=== spring-integration-kafka-app - Spring Integration Kafka Outbound Channel Adapter and Message Driven Channel Adapter Demo
+=== https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-integration-kafka-app/src/main/java/app7/SpringIntegrationKafkaApp.java[spring-integration-kafka-app - Spring Integration Kafka Outbound Channel Adapter and Message Driven Channel Adapter Demo]
 
-This is an application in which we demo the usage of Spring Integration Kafka support.
+This is an application in which we demonstrate the usage of Spring Integration Kafka support.
 This is a basic application that shows the Kafka outbound channel adapter and message driven channel adapter.
-Outbound channel adapter is configured with a `KafkaTemplate` auto-configured through Boot.
+Outbound channel adapter is configured with a `KafkaTemplate` auto-configured through Spring Boot.
 Kafka message driven channel adapter uses a custom message listener container created in the app.
 
-THe application sends messages to a message channel called `toKafka` which the outbound adapter listens on and send to Kafka topic.
-Message driven channel adapter consumes from the topic and put the messages on another message channel (`fromKafka`).
-The application runner in the app receives from this channel `fromKafka` and print the information on the console.
+THe application sends messages to a message channel called `toKafka` which the outbound adapter listens on and sends to a Kafka topic.
+Message driven channel adapter consumes from the topic and puts the messages on another message channel (`fromKafka`).
+The application runner in the app receives from this channel `fromKafka` and prints the information on the console.
 
 

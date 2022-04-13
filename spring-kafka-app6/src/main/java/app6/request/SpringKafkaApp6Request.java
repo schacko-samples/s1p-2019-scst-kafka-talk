@@ -30,7 +30,7 @@ public class SpringKafkaApp6Request {
 	}
 
 	@RestController
-	static class Controller {
+	static class Producer {
 
 		@Autowired @Lazy ReplyingKafkaTemplate<String, String, String> replyingTemplate;
 

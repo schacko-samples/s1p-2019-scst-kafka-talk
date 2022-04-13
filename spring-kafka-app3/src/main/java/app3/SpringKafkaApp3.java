@@ -30,32 +30,26 @@ public class SpringKafkaApp3 {
 		SpringApplication.run(SpringKafkaApp3.class, args);
 	}
 
-		static class Producer {
-
-		@Bean
-		public ApplicationRunner runner(KafkaTemplate<String, String> kafkaTemplate) {
-			Faker faker = Faker.instance();
-			return args -> {
-				for (int i = 0; i < 100; i++) {
-					final Book book = faker.book();
-					kafkaTemplate.send("spring-kafka-app3-demo",
-							String.join(", ", book.title(), book.author(), book.genre(), book.publisher()));
-				}
-			};
-		}
+	@Bean
+	public NewTopic springKafkaApp3DemoTopic() {
+		return TopicBuilder.name("spring-kafka-app3-demo")
+				.partitions(1)
+				.replicas(3)
+				.build();
 	}
 
-	static class Admin {
-
-		@Bean
-		public NewTopic quickTopic() {
-			return TopicBuilder.name("spring-kafka-app3-demo")
-					.partitions(1)
-					.replicas(3)
-					.build();
-		}
-
+	@Bean
+	public ApplicationRunner runner(KafkaTemplate<String, String> kafkaTemplate) {
+		Faker faker = Faker.instance();
+		return args -> {
+			for (int i = 0; i < 100; i++) {
+				final Book book = faker.book();
+				kafkaTemplate.send("spring-kafka-app3-demo",
+						String.join(", ", book.title(), book.author(), book.genre(), book.publisher()));
+			}
+		};
 	}
+
 
 	@Component
 	static class Listener extends AbstractConsumerSeekAware {

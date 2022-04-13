@@ -63,8 +63,16 @@ public class SpringKafkaApp4 {
 	static class Admin {
 
 		@Bean
-		public NewTopic quickTopic() {
+		public NewTopic springKafkaApp4DemoTopic() {
 			return TopicBuilder.name("spring-kafka-app4-demo")
+					.partitions(1)
+					.replicas(3)
+					.build();
+		}
+
+		@Bean
+		public NewTopic springKafkaApp4DemoDltTopic() {
+			return TopicBuilder.name("spring-kafka-app4-demo.DLT")
 					.partitions(1)
 					.replicas(3)
 					.build();

@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Component;
 
 @SpringBootApplication
 public class SpringKafkaApp2 {
@@ -24,47 +23,36 @@ public class SpringKafkaApp2 {
 		SpringApplication.run(SpringKafkaApp2.class, args);
 	}
 
-		static class Producer {
-
-		@Bean
-		public ApplicationRunner runner(KafkaTemplate<String, Foo> kafkaTemplate) {
-			Faker faker = Faker.instance();
-			return args -> {
-				for (int i = 0; i < 10; i++) {
-					final Book book = faker.book();
-					Foo foo = new Foo();
-					foo.setTitle(book.title());
-					foo.setAuthor(book.author());
-					foo.setGenre(book.genre());
-					foo.setPublisher(book.publisher());
-					kafkaTemplate.send("spring-kafka-app2-demo", foo.getTitle(), foo);
-					Thread.sleep(100);
-				}
-			};
-		}
+	@Bean
+	public NewTopic springKafkaApp2DemoTopic() {
+		return TopicBuilder.name("spring-kafka-app2-demo")
+				.partitions(3)
+				.replicas(3)
+				.build();
 	}
 
-	static class Admin {
-
-		@Bean
-		public NewTopic quickTopic() {
-			return TopicBuilder.name("spring-kafka-app2-demo")
-					.partitions(3)
-					.replicas(3)
-					.build();
-		}
-
+	@Bean
+	public ApplicationRunner runner(KafkaTemplate<String, Foo> kafkaTemplate) {
+		Faker faker = Faker.instance();
+		return args -> {
+			for (int i = 0; i < 10; i++) {
+				final Book book = faker.book();
+				Foo foo = new Foo();
+				foo.setTitle(book.title());
+				foo.setAuthor(book.author());
+				foo.setGenre(book.genre());
+				foo.setPublisher(book.publisher());
+				kafkaTemplate.send("spring-kafka-app2-demo", foo.getTitle(), foo);
+				Thread.sleep(100);
+			}
+		};
 	}
 
-	@Component
-	static class Listener {
-
-		@KafkaListener(id = "sk-app2-demo-group", topics = "spring-kafka-app2-demo")
-		public void listen(Foo in) {
-			logger.info("Data Received : " + in);
-		}
-
+	@KafkaListener(id = "sk-app2-demo-group", topics = "spring-kafka-app2-demo")
+	public void listen(Foo in) {
+		logger.info("Data Received : " + in);
 	}
+
 
 	static class Foo {
 

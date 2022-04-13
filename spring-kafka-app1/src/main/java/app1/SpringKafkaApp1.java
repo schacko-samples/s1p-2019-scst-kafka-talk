@@ -25,7 +25,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,6 +35,43 @@ public class SpringKafkaApp1 {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringKafkaApp1.class, args);
+	}
+
+	@Bean
+	public KafkaAdmin.NewTopics springKafkaApp1Demo1Topics() {
+		return new KafkaAdmin.NewTopics(
+				TopicBuilder.name("spring-kafka-app1-demo1")
+						.partitions(10)
+						.replicas(3)
+						.build(),
+				TopicBuilder.name("spring-kafka-app1-demo2")
+						.partitions(10)
+						.replicas(3)
+						.build());
+	}
+
+	@KafkaListener(id = "sk-app1-demo1-group", topicPartitions =
+	@TopicPartition(topic = "spring-kafka-app1-demo1",
+			partitionOffsets = {
+					@PartitionOffset(partition = "0-2", initialOffset = "0"),
+					@PartitionOffset(partition = "6-9", initialOffset = "0")
+			}),
+			properties = "key.deserializer:org.apache.kafka.common.serialization.LongDeserializer")
+	public void listen1(String in, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) Long key,
+						@Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
+						@Header(KafkaHeaders.OFFSET) int offset) {
+		logger.info("Demo1 - Data Received : {} with key {} from partition {} and offset {}.", in, key, partition, offset);
+	}
+
+	@KafkaListener(id = "sk-app1-demo2-group", topicPartitions = {
+			@TopicPartition(topic = "spring-kafka-app1-demo2", partitions = "0-1, 4, 6, 8-9",
+					partitionOffsets = @PartitionOffset(partition = "*", initialOffset = "0")
+			)},
+			properties = "key.deserializer:org.apache.kafka.common.serialization.UUIDDeserializer")
+	public void listen2(String in, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) UUID key,
+						@Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
+						@Header(KafkaHeaders.OFFSET) int offset) {
+		logger.info("Demo 2 - Data Received : {} with key {} from partition {} and offset {}.", in, key, partition, offset);
 	}
 
 	@RestController
@@ -74,50 +110,6 @@ public class SpringKafkaApp1 {
 		public KafkaTemplate<UUID, String> uuidStringKafkaTemplate(ProducerFactory<UUID, String> pf) {
 			return new KafkaTemplate<>(pf,
 					Collections.singletonMap(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, UUIDSerializer.class));
-		}
-	}
-
-	static class Admin {
-
-		@Bean
-		public KafkaAdmin.NewTopics springKafkaApp1Demo1Topic() {
-			return new KafkaAdmin.NewTopics(
-					TopicBuilder.name("spring-kafka-app1-demo1")
-						.partitions(10)
-						.replicas(3)
-						.build(),
-					TopicBuilder.name("spring-kafka-app1-demo2")
-						.partitions(10)
-						.replicas(3)
-						.build());
-		}
-	}
-
-	@Component
-	static class Listener {
-
-		@KafkaListener(id = "sk-app1-demo1-group", topicPartitions =
-							@TopicPartition(topic = "spring-kafka-app1-demo1",
-									partitionOffsets = {
-										@PartitionOffset(partition = "0-2", initialOffset = "0"),
-										@PartitionOffset(partition = "6-9", initialOffset = "0")
-							}),
-				 		properties = "key.deserializer:org.apache.kafka.common.serialization.LongDeserializer")
-		public void listen1(String in, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) Long key,
-						   @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
-						   @Header(KafkaHeaders.OFFSET) int offset) {
-			logger.info("Demo1 - Data Received : {} with key {} from partition {} and offset {}.", in, key, partition, offset);
-		}
-
-		@KafkaListener(id = "sk-app1-demo2-group", topicPartitions = {
-						@TopicPartition(topic = "spring-kafka-app1-demo2", partitions = "0-1, 4, 6, 8-9",
-							partitionOffsets = @PartitionOffset(partition = "*", initialOffset = "0")
-						)},
-				properties = "key.deserializer:org.apache.kafka.common.serialization.UUIDDeserializer")
-		public void listen2(String in, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) UUID key,
-						   @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
-						   @Header(KafkaHeaders.OFFSET) int offset) {
-			logger.info("Demo 2 - Data Received : {} with key {} from partition {} and offset {}.", in, key, partition, offset);
 		}
 	}
 }

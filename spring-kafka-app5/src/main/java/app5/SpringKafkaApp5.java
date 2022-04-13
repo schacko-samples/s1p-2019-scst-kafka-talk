@@ -54,8 +54,16 @@ public class SpringKafkaApp5 {
 	static class Admin {
 
 		@Bean
-		public NewTopic quickTopic() {
+		public NewTopic springKafkaApp5DemoTopic() {
 			return TopicBuilder.name("spring-kafka-app5-demo")
+					.partitions(1)
+					.replicas(3)
+					.build();
+		}
+
+		@Bean
+		public NewTopic springKafkaApp5DemoDltTopic() {
+			return TopicBuilder.name("spring-kafka-app5-demo.DLT")
 					.partitions(1)
 					.replicas(3)
 					.build();
