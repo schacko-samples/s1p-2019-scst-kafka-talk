@@ -26,7 +26,7 @@ public class SpringKafkaApp0 {
 		SpringApplication.run(SpringKafkaApp0.class, args);
 	}
 
-		static class Producer {
+	static class Producer {
 
 		@Bean
 		public ApplicationRunner runner(KafkaTemplate<String, String> kafkaTemplate) {

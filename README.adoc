@@ -123,5 +123,15 @@ curl -X POST -H "Content-Type: text/plain" --data "hello request-reply in Spring
 
 On the console output on the request application, you should see the received text.
 
+=== spring-integration-kafka-app - Spring Integration Kafka Outbound Channel Adapter and Message Driven Channel Adapter Demo
+
+This is an application in which we demo the usage of Spring Integration Kafka support.
+This is a basic application that shows the Kafka outbound channel adapter and message driven channel adapter.
+Outbound channel adapter is configured with a `KafkaTemplate` auto-configured through Boot.
+Kafka message driven channel adapter uses a custom message listener container created in the app.
+
+THe application sends messages to a message channel called `toKafka` which the outbound adapter listens on and send to Kafka topic.
+Message driven channel adapter consumes from the topic and put the messages on another message channel (`fromKafka`).
+The application runner in the app receives from this channel `fromKafka` and print the information on the console.
 
 
