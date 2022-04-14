@@ -1,4 +1,4 @@
-package app7;
+package integration;
 
 import java.util.Collections;
 import java.util.Map;

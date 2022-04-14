@@ -1,10 +1,10 @@
-package app1;
+package app3;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SpringKafkaApp1Tests {
+class SpringKafkaApp3Tests {
 
 	@Test
 	void contextLoads() {

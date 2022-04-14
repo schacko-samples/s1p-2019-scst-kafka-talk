@@ -42,7 +42,6 @@ public class SpringKafkaApp0 {
 				final ListenableFuture<SendResult<String, String>> send = kafkaTemplate.send("spring-kafka-app0-demo1",
 						String.join(", ", book.title(), book.author(), book.genre(), book.publisher()));
 				final SendResult<String, String> stringStringSendResult = send.get();
-				Thread.sleep(100);
 			}
 		};
 	}

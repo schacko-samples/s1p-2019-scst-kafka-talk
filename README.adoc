@@ -28,6 +28,8 @@ Then it publishes random text data to this topic using `KafkaTemplate` and then 
 The application uses the https://github.com/DiUS/java-faker[Java Faker] library to generate 100 random Book recommendations with a one-second delay.
 The listener simply consumes the records and prints them on the console.
 
+This application also includes a basic JUnit 5 based test using EmbeddedKafkaBroker.
+
 === https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-kafka-app1/src/main/java/app1/SpringKafkaApp1.java[spring-kafka-app1 - Advanced application with two publishers and listeners with initial assignment]
 
 In this application, we have two publishers both using custom `KafkaTemplate` beans.
@@ -127,7 +129,7 @@ curl -X POST -H "Content-Type: text/plain" --data "hello request-reply in Spring
 
 On the console output on the request application, you should see the received text.
 
-=== https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-integration-kafka-app/src/main/java/app7/SpringIntegrationKafkaApp.java[spring-integration-kafka-app - Spring Integration Kafka Outbound Channel Adapter and Message Driven Channel Adapter Demo]
+=== https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-integration-kafka-app/src/main/java/integration/SpringIntegrationKafkaApp.java[spring-integration-kafka-app - Spring Integration Kafka Outbound Channel Adapter and Message Driven Channel Adapter Demo]
 
 This is an application in which we demonstrate the usage of Spring Integration Kafka support.
 This is a basic application that shows the Kafka outbound channel adapter and message driven channel adapter.
