@@ -23,7 +23,7 @@ public class SpringCloudStreamApp2Application {
 	StreamBridge streamBridge;
 
 	@PostMapping(path = "/publish/demo")
-	public void publishDemo(@RequestBody String data) throws Exception {
+	public void publishDemo(@RequestBody String data) {
 		streamBridge.send("sensor-out-0", data);
 	}
 

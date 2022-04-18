@@ -141,3 +141,193 @@ Message driven channel adapter consumes from the topic and puts the messages on 
 The application runner in the app receives from this channel `fromKafka` and prints the information on the console.
 
 
+=== https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-cloud-stream-app1/src/main/java/scst/app1/SpringCloudStreamApp1Application.java[spring-cloud-stream-app1 - Basic Spring Cloud Stream App with Function Composition]
+
+This is a basic Spring Cloud Stream application in which we demonstrate the functioning of a supplier, function and consumer.
+Supplier produces some data every second (the default schedule) to a Kafka topic and then the consumer receives it from that topic.
+The definition for this flow is supplier;consumer.
+Take a look at the application.properties to see how this is defined.
+There is another flow which is parallel to the first one.
+The difference is that this is a composed flow - supplier|function.
+The function definition in the configuration makes these two completely isolated flows.
+The composed one starts with the same supplier as the first one where it produces every second, but then it passes through a function where the data is transformed.
+The link between the supplier and the function in this case is in-memory, i.e. the only time the data is sent to Kafka it on the output of the function.
+Finally, we have one more isolated definition for a consumer where it consumes from the topic where the composed flow sent the data.
+
+In order to run the application, simply run it, and you will see the data getting logged on the console.
+
+=== https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-cloud-stream-app2/src/main/java/scst/app2/SpringCloudStreamApp2Application.java[spring-cloud-stream-app2 - Spring Cloud Stream/StreamBridge API demo]
+
+In this application, we show how non-functional style suppliers can be written for on-demand triggering using the `StreamBridge` API.
+The application has a REST endpoint, which upon invoking wil trigger the publishing of the data through the `StreamBridge` API.
+`StreamBridge` creates all the necessary output bindings.
+This demo app also has a consumer that consumes from the Kafka topic where the `StreamBridge` is publishing to.
+
+Run the application and invoke the REST endpoint as below.
+
+```
+curl -X POST -H "Content-Type: text/plain" --data "StreamBridge Demo" http://localhost:8080/publish/demo
+```
+
+The consumer will print the data that is published to the topic through `StreamBridge`.
+
+=== https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-cloud-stream-app3/src/main/java/scst/app3/SpringCloudStreamApp3Application.java[spring-cloud-stream-app3 - Spring Cloud Stream Kafka Streams Basic]
+
+In this application, we see how Spring Cloud Stream Kafka Streams binder works.
+
+The example is based on the canonical word count application.
+It is written using Spring Cloud Stream binder for Kafka Streams using java.util.function.Function to represent a processor.
+It uses a single input and a single output.
+In essence, the application receives text messages from an input topic and computes word occurrence counts in a configurable time window and report that in an output topic.
+
+Run the application first.
+
+Following commands are issued using `kafkacat`.
+You can also use other tools like the Kafka console producer/consumer scripts.
+
+`kafkacat -b localhost:9092 -t words -P`
+
+On another terminal:
+
+`kafkacat -b localhost:9092 -t counts`
+
+Enter some text through the `words` topic and watch the counts getting updated in the `counts` topic.
+
+==== Accessing binder health endpoint
+
+```
+curl localhost:8080/actuator/health | jq .
+```
+
+==== Accessing Kafka Streams metrics
+
+```
+curl localhost:8080/actuator/metrics | jq .
+```
+
+==== Something more specific
+
+```
+curl localhost:8080/actuator/metrics/kafka.stream.thread.commit.total | jq .
+```
+
+==== Visualize Kafka Streams topology
+
+```
+curl localhost:8080/actuator/kafkastreamstopology | jq .
+curl localhost:8080/actuator/kafkastreamstopology/clicks-applicationId
+curl localhost:8080/actuator/kafkastreamstopology/updates-applicationId
+```
+
+Popular UI tool for visualizing the topology: https://zz85.github.io/kafka-streams-viz/
+
+==== Accessing all the bindings
+
+```
+curl localhost:8080/actuator/bindings | jq .
+```
+
+==== Stopping binding
+
+```
+curl -d '{"state":"STOPPED"}' -H "Content-Type: application/json" -X POST http://localhost:8080/actuator/bindings/process-in-0
+```
+
+==== Starting binding
+
+```
+curl -d '{"state":"STARTED"}' -H "Content-Type: application/json" -X POST http://localhost:8080/actuator/bindings/process-in-0
+```
+
+=== https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-cloud-stream-app4/user-clicks-per-region/src/main/java/scst/app4/SpringCloudStreamApp4Application.java[spring-cloud-stream-app4 - Spring Cloud Stream Kafka Streams Advanced]
+
+This is an advanced sample of a Spring Cloud Stream processor using Kafka Streams support that shows both KStream and KTable bindings.
+
+Following are the two applications in this sample.
+
+* Spring Cloud Stream based Kafka Streams processor
+* Spring Cloud Stream producer application to generate data for the processor
+
+Kafka Streams processor uses java.util.function.BiFunction to demonstrate two inputs and an output.
+The processor consumes user region data as `KTable` and then user clicks information as `KStream`.
+Then it produces the clicks per region info on the outbound.
+The same outbound information is stored in a state store as well to demonstrate interactive query capabilities of Kafka Streams exposed as `IteractiveQueryService` in Spring Cloud Stream.
+
+The application also has a second processor to listen from the outbound topic to log the information.
+In addition, the application also exposes a REST endpoint, using which the user clicks data per region can be queried.
+
+Run the app `SpringCloudStreamApp4Application`, then the producer app - `UserClicksRegionProducerApplication`.
+
+The producer app has two REST endpoints that allow you to publish user-region and user-click information to Kafka topics.
+
+First enter some data for user region.
+
+```
+curl -X POST localhost:8090/user-region/alice/asia
+```
+
+At this point, Alice lives in Asia.
+
+Now send some click impression data from Alice.
+
+```
+curl -X POST localhost:8090/user-clicks/alice/12
+```
+
+Watch the console of the `SpringCloudStreamApp4Application` and see that the clicks per region information is logged from the test processor.
+
+Invoke the REST endpoint to extract this same information through an interactive query.
+
+```
+curl localhost:8080/updates/asia | jq .
+```
+
+Enter more POST data as above and verify that you see the correct output.
+
+==== Accessing binder health endpoint
+
+```
+curl localhost:8080/actuator/health | jq .
+```
+
+==== Accessing Kafka Streams metrics
+
+```
+curl localhost:8080/actuator/metrics | jq .
+```
+
+==== Something more specific
+
+```
+curl localhost:8080/actuator/metrics/kafka.stream.thread.commit.total | jq .
+```
+
+==== Visualize Kafka Streams topology
+
+```
+curl localhost:8080/actuator/kafkastreamstopology | jq .
+curl localhost:8080/actuator/kafkastreamstopology/clicks-applicationId
+curl localhost:8080/actuator/kafkastreamstopology/updates-applicationId
+```
+
+Popular UI tool for visualizing the topology: https://zz85.github.io/kafka-streams-viz/
+
+==== Accessing all the bindings
+
+```
+curl localhost:8080/actuator/bindings | jq .
+```
+
+==== Stopping binding
+
+```
+curl -d '{"state":"STOPPED"}' -H "Content-Type: application/json" -X POST http://localhost:8080/actuator/bindings/clicks-in-0
+```
+
+Note: All bindings corresponding to this Kafka Streams application id will be stopped.
+
+==== Starting binding
+
+```
+curl -d '{"state":"STARTED"}' -H "Content-Type: application/json" -X POST http://localhost:8080/actuator/bindings/clicks-in-0
+```

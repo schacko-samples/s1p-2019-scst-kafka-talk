@@ -26,7 +26,6 @@ public class SpringCloudStreamApp3Application {
 
 		@Bean
 		public Function<KStream<Object, String>, KStream<Object, WordCount>> process() {
-
 			return input -> input
 					.flatMapValues(value -> Arrays.asList(value.toLowerCase().split("\\W+")))
 					.map((key, value) -> new KeyValue<>(value, value))

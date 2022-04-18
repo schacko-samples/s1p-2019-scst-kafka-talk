@@ -9,5 +9,6 @@
     <modules>
 
         <module>user-clicks-per-region</module>
+        <module>user-clicks-region-producer</module>
     </modules>
 </project>
