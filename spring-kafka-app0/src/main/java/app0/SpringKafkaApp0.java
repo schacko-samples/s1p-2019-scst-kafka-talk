@@ -3,8 +3,6 @@ package app0;
 import com.github.javafaker.Book;
 import com.github.javafaker.Faker;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,8 +16,6 @@ import org.springframework.util.concurrent.ListenableFuture;
 
 @SpringBootApplication
 public class SpringKafkaApp0 {
-
-	private static final Logger logger = LoggerFactory.getLogger(SpringKafkaApp0.class);
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringKafkaApp0.class, args);
@@ -41,13 +37,13 @@ public class SpringKafkaApp0 {
 				final Book book = faker.book();
 				final ListenableFuture<SendResult<String, String>> send = kafkaTemplate.send("spring-kafka-app0-demo1",
 						String.join(", ", book.title(), book.author(), book.genre(), book.publisher()));
-				final SendResult<String, String> stringStringSendResult = send.get();
+				send.get();
 			}
 		};
 	}
 
 	@KafkaListener(id = "sk-app0-demo1-group", topics = "spring-kafka-app0-demo1")
 	public void listen(String in) {
-		logger.info("Data Received : " + in);
+		System.out.println("Data Received : " + in);
 	}
 }

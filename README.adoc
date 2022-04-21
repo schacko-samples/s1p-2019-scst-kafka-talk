@@ -3,7 +3,7 @@
 This is the demo repository that goes along with the talk https://www.kafka-summit.org/sessions/walking-through-the-spring-stack-for-apache-kafka[Walking through the Spring Stack for Apache Kafka].
 
 In order to run these demo applications, you need to have Kafka running on your `localhost:9092`.
-If you have Kafka running elsewhere, please ensure that you update the properties for bootstrap server accordingly.
+If you have Kafka running elsewhere, please ensure that you update the properties for bootstrap server accordingly (`spring.kafka.bootstrap-servers`).
 
 For convenience, we provide a docker-compose script, that allows you to run a three-node Kafka cluster locally and make one of them available at `localhost:9092`.
 
@@ -14,7 +14,7 @@ For convenience, we provide a docker-compose script, that allows you to run a th
 
 == Demo applications
 
-This repository contains several standalone demo applications.
+This repository contains several standalone Spring Boot applications for demonstrating various features mentioned during the talk.
 Navigate to the README on each application for more details.
 
 === https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-kafka-app0/src/main/java/app0/SpringKafkaApp0.java[spring-kafka-app0 - Basic Application to Publish and Consume Text Based Records]
@@ -25,7 +25,7 @@ Then it publishes random text data to this topic using `KafkaTemplate` and then 
 `KafkaTemplate` and all its necessary components such as the `ProducerFactory` are auto-configured through Spring Boot.
 `KafkaListener` relies on a `ConcurrnetKafkaListenerContainerFactory` auto-configured through Boot to create its message listener container.
 
-The application uses the https://github.com/DiUS/java-faker[Java Faker] library to generate 100 random Book recommendations with a one-second delay.
+The application uses the https://github.com/DiUS/java-faker[Java Faker] library to generate 100 random Book recommendations each time it runs.
 The listener simply consumes the records and prints them on the console.
 
 This application also includes a basic JUnit 5 based test using EmbeddedKafkaBroker.
@@ -33,7 +33,7 @@ This application also includes a basic JUnit 5 based test using EmbeddedKafkaBro
 === https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-kafka-app1/src/main/java/app1/SpringKafkaApp1.java[spring-kafka-app1 - Advanced application with two publishers and listeners with initial assignment]
 
 In this application, we have two publishers both using custom `KafkaTemplate` beans.
-One `KafkaTemplate` uses `Long` as key type and the other one uses `UUID`, while both of them use `String` as value type.
+One `KafkaTemplate` uses `Long` as the key type and the other uses `UUID`, while both of them use `String` as value type.
 The publishers are initiated using REST endpoints.
 
 Application creates two Kafka topics - `spring-kafka-app1-demo1` and `spring-kafka-app1-demo2` both with 10 partitions.
@@ -43,7 +43,7 @@ The first listener uses, `TopicPartition` and `PartitionOffset` annotations to c
 The second listener is a variant of the first one, demonstrating how wildcard patterns can be used for partitions and initial assignments.
 Take a look at the listeners for how they override the deserializer properties as opposed to what is auto-configured through Spring Boot.
 
-In order to see the app in actions, run it (for e.g. on an IDE) and then issue the following two CURL commands.
+In order to see the application in action, run it (for e.g. on an IDE) and then issue the following two CURL commands.
 
 ```
 curl -X POST  http://localhost:8080/publish/demo1
@@ -66,7 +66,7 @@ Take a look at the `application.properties` configuration file for seeing how th
 
 In this application, we have a publisher and a listener.
 The listener extends from `AbstractConsumerSeekAware` which implements `ConsumerSeekAware`.
-App creates a topic named `spring-kafka-app3-demo` with a single partition.
+Application creates a topic named `spring-kafka-app3-demo` with a single partition.
 
 Each time the listener starts, we always seek the partition to offset 20.
 The publisher sends 100 records each time when the app starts.
@@ -77,12 +77,10 @@ This application demonstrates how container error handling works in Spring for A
 The application has a publisher which is invoked through a REST endpoint.
 Each time the REST endpoint is called, the publisher sends 10 records to the topic `spring-kafka-app4-demo`.
 
-
 On the consumer side, we have a contrived logic for throwing an exception for each time the offset is > 0 and divisible by 10.
 By default, when the exception happens, the `DefaultErrorHandler` will kick in with 10 maximum tries without any backoff.
-Now, uncomment the code in the `Listener` class.
-This code will create a custom `DefaultErrorHandler` which the boot autoconfiguration picks up and configure with the container factory.
-The custom handler will re-try for a maximum of 3 times with a two seconds backoff each time.
+However, we provide a custom bean declaration for `DefaultErrorHandler`, which the boot autoconfiguration picks up and configure with the container factory.
+This custom handler will re-try for a maximum of 3 times with a two seconds backoff each time.
 The handler also is configured with a `DeadLetterPublishingRecoverer` which sends the record in error to a default DLT topic.
 Next time, the app runs, you will notice that the first record (with offset % 10 ==0) tries to recover for 3 times and then being sent to the DLT.
 There is also a convenient `KafkaListener` method for DLT where it logs the DLT messages.
@@ -112,10 +110,9 @@ The applications rely on two Kafka topics - `kRequests` and `kReplies`.
 Using the `ReplyingKafkaTemplate`, the request application sends a message to the topic `kRequests` and wait for the reply by blocking on the reply future.
 The `ReplyingKafkaTemplate` is configured with a reply container that specifies the reply topic (`kReplies`) to wait on.
 
-
 On the replies side, another application is provided that has a `KafkaListener` that listens on the topic where the requests are sent (`kRequests`).
 Once the listener receives data, the listener converts the text to uppercase and then echoes it back to the reply topic.
-When doing so, it also adds the proper CORRELATION_ID it received as part of the request, so that the listener on the request side (in `ReplyingKafkaTemplate`) can properly discover it.
+When doing so, it also adds the proper `CORRELATION_ID` it received as part of the request, so that the listener on the request side (in `ReplyingKafkaTemplate`) can properly discover it.
 
 In order to run the app, do the following.
 
@@ -136,25 +133,20 @@ This is a basic application that shows the Kafka outbound channel adapter and me
 Outbound channel adapter is configured with a `KafkaTemplate` auto-configured through Spring Boot.
 Kafka message driven channel adapter uses a custom message listener container created in the app.
 
-THe application sends messages to a message channel called `toKafka` which the outbound adapter listens on and sends to a Kafka topic.
+The application runner bean sends messages to a message channel called `toKafka` which the outbound adapter listens on and sends to a Kafka topic.
 Message driven channel adapter consumes from the topic and puts the messages on another message channel (`fromKafka`).
 The application runner in the app receives from this channel `fromKafka` and prints the information on the console.
-
 
 === https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-cloud-stream-app1/src/main/java/scst/app1/SpringCloudStreamApp1Application.java[spring-cloud-stream-app1 - Basic Spring Cloud Stream App with Function Composition]
 
 This is a basic Spring Cloud Stream application in which we demonstrate the functioning of a supplier, function and consumer.
-Supplier produces some data every second (the default schedule) to a Kafka topic and then the consumer receives it from that topic.
-The definition for this flow is supplier;consumer.
-Take a look at the application.properties to see how this is defined.
-There is another flow which is parallel to the first one.
-The difference is that this is a composed flow - supplier|function.
-The function definition in the configuration makes these two completely isolated flows.
-The composed one starts with the same supplier as the first one where it produces every second, but then it passes through a function where the data is transformed.
-The link between the supplier and the function in this case is in-memory, i.e. the only time the data is sent to Kafka it on the output of the function.
-Finally, we have one more isolated definition for a consumer where it consumes from the topic where the composed flow sent the data.
+Supplier produces the current time in milliseconds as a `Long` value.
+By default, the supplier in Spring Cloud Stream runs every second, and we use that default.
+There is a function that receives this supplied data and converts this to UTC based time.
+Then there is a consumer that receives this UTC based time and prints it on the console.
+Take a look at the application.properties to see how the functions are activated.
 
-In order to run the application, simply run it, and you will see the data getting logged on the console.
+In order to run the application, simply run it, and you will see the data getting logged on the console as UTC time.
 
 === https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-cloud-stream-app2/src/main/java/scst/app2/SpringCloudStreamApp2Application.java[spring-cloud-stream-app2 - Spring Cloud Stream/StreamBridge API demo]
 
@@ -182,16 +174,11 @@ In essence, the application receives text messages from an input topic and compu
 
 Run the application first.
 
-Following commands are issued using `kafkacat`.
-You can also use other tools like the Kafka console producer/consumer scripts.
-
-`kafkacat -b localhost:9092 -t words -P`
-
-On another terminal:
-
-`kafkacat -b localhost:9092 -t counts`
-
-Enter some text through the `words` topic and watch the counts getting updated in the `counts` topic.
+Kafka Streams processor is named as `countWords`.
+The application also uses the regular Kafka binder which for producing data every second - the same book recommendation data we were using in the other apps from the Java faker library.
+This supplier function is called `provideWords` which is producing to a topic called `words` from where the Kafka Streams processor consumes data from.
+The processor `countWords` processor writes the count information to a topic called `counts`.
+We have another consumer function using the regular Kafka binder that simply listens on this `counts` topic and prints the word count information on the console.
 
 ==== Accessing binder health endpoint
 
@@ -256,7 +243,7 @@ The same outbound information is stored in a state store as well to demonstrate 
 The application also has a second processor to listen from the outbound topic to log the information.
 In addition, the application also exposes a REST endpoint, using which the user clicks data per region can be queried.
 
-Run the app `SpringCloudStreamApp4Application`, then the producer app - `UserClicksRegionProducerApplication`.
+Run the app `SpringCloudStreamApp4Application` first, then the producer app - `UserClicksRegionProducerApplication`.
 
 The producer app has two REST endpoints that allow you to publish user-region and user-click information to Kafka topics.
 
@@ -309,8 +296,6 @@ curl localhost:8080/actuator/kafkastreamstopology | jq .
 curl localhost:8080/actuator/kafkastreamstopology/clicks-applicationId
 curl localhost:8080/actuator/kafkastreamstopology/updates-applicationId
 ```
-
-Popular UI tool for visualizing the topology: https://zz85.github.io/kafka-streams-viz/
 
 ==== Accessing all the bindings
 

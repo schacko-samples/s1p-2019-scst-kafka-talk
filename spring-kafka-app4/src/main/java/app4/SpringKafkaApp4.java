@@ -94,23 +94,23 @@ public class SpringKafkaApp4 {
 			}
 		}
 
-//		@Bean
-//		public DefaultErrorHandler errorHandler(DeadLetterPublishingRecoverer recoverer) {
-//			return new DefaultErrorHandler(recoverer, new FixedBackOff(2_000, 2));
-//		}
-//
-//		@Bean
-//		public DeadLetterPublishingRecoverer publisher(KafkaTemplate<Long, String> template) {
-//			return new DeadLetterPublishingRecoverer(template);
-//		}
-//
-//		@KafkaListener(id = "from.dlt", topics = "spring-kafka-app4-demo.DLT",
-//				properties = "key.deserializer:org.apache.kafka.common.serialization.LongDeserializer")
-//		public void listenFromDlt(String in, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) Long key,
-//						   @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
-//						   @Header(KafkaHeaders.OFFSET) int offset) {
-//			logger.info("DLT Data Received : {} with key {} from partition {} and offset {}.", in, key, partition, offset);
-//		}
+		@Bean
+		public DefaultErrorHandler errorHandler(DeadLetterPublishingRecoverer recoverer) {
+			return new DefaultErrorHandler(recoverer, new FixedBackOff(2_000, 2));
+		}
+
+		@Bean
+		public DeadLetterPublishingRecoverer publisher(KafkaTemplate<Long, String> template) {
+			return new DeadLetterPublishingRecoverer(template);
+		}
+
+		@KafkaListener(id = "from.dlt", topics = "spring-kafka-app4-demo.DLT",
+				properties = "key.deserializer:org.apache.kafka.common.serialization.LongDeserializer")
+		public void listenFromDlt(String in, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) Long key,
+						   @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
+						   @Header(KafkaHeaders.OFFSET) int offset) {
+			logger.info("DLT Data Received : {} with key {} from partition {} and offset {}.", in, key, partition, offset);
+		}
 
 	}
 }

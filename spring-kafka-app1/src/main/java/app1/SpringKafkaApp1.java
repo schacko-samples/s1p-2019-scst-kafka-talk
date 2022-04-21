@@ -60,7 +60,7 @@ public class SpringKafkaApp1 {
 	public void listen1(String in, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) Long key,
 						@Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
 						@Header(KafkaHeaders.OFFSET) int offset) {
-		logger.info("Demo1 - Data Received : {} with key {} from partition {} and offset {}.", in, key, partition, offset);
+		logger.info("Listener-1:: Data Received : {} with key {} from partition {} and offset {}.", in, key, partition, offset);
 	}
 
 	@KafkaListener(id = "sk-app1-demo2-group", topicPartitions = {
@@ -71,7 +71,7 @@ public class SpringKafkaApp1 {
 	public void listen2(String in, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) UUID key,
 						@Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
 						@Header(KafkaHeaders.OFFSET) int offset) {
-		logger.info("Demo 2 - Data Received : {} with key {} from partition {} and offset {}.", in, key, partition, offset);
+		logger.info("Listener-2:: Data Received : {} with key {} from partition {} and offset {}.", in, key, partition, offset);
 	}
 
 	@RestController
