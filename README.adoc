@@ -82,13 +82,13 @@ By default, when the exception happens, the `DefaultErrorHandler` will kick in w
 However, we provide a custom bean declaration for `DefaultErrorHandler`, which the boot autoconfiguration picks up and configure with the container factory.
 This custom handler will re-try for a maximum of 3 times with a two seconds backoff each time.
 The handler also is configured with a `DeadLetterPublishingRecoverer` which sends the record in error to a default DLT topic.
-Next time, the app runs, you will notice that the first record (with offset % 10 ==0) tries to recover for 3 times and then being sent to the DLT.
+Next time, the app runs, you will notice that the first record (with `offset % 10 == 0`) tries to recover for 3 times and then being sent to the DLT.
 There is also a convenient `KafkaListener` method for DLT where it logs the DLT messages.
 
 In order to exercise the app, run it first and then issue the following CURL command.
 
 ```
-curl -X POST  http://localhost:8080/publish
+curl -X POST  http://localhost:8080/publish/demo
 ```
 
 === https://github.com/schacko-samples/kafka-summit-london-2022/blob/main/spring-kafka-app5/src/main/java/app5/SpringKafkaApp5.java[spring-kafka-app5 - ErrorHandlingDeserializer]
