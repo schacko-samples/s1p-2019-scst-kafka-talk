@@ -89,7 +89,7 @@ public class SpringKafkaApp4 {
 						   @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
 						   @Header(KafkaHeaders.OFFSET) int offset) {
 			logger.info("Data Received : {} with key {} from partition {} and offset {}.", in, key, partition, offset);
-			if (offset > 0 && offset % 10 == 0) {
+			if (offset > 0 && offset % 9 == 0) {
 				throw new RuntimeException("fail");
 			}
 		}
