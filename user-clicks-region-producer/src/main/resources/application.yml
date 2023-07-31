@@ -1,0 +1,23 @@
+spring.cloud.stream.bindings:
+ regions:
+  destination: user-regions
+  producer:
+   useNativeEncoding: true
+ clicks:
+  destination: user-clicks
+  producer:
+   useNativeEncoding: true
+server.port: 8090
+spring.cloud.stream.kafka.binder.configuration:
+ key.serializer: org.apache.kafka.common.serialization.StringSerializer
+spring.cloud.stream.kafka.bindings.regions.producer:
+ configuration:
+  value.serializer: org.apache.kafka.common.serialization.StringSerializer
+spring.cloud.stream.kafka.bindings.clicks.producer:
+ configuration:
+  value.serializer: org.apache.kafka.common.serialization.LongSerializer
+
+
+
+#spring.cloud.stream.kafka.bindings.regions.producer.messageKeyExpression: headers['kafka_messageKey']
+#spring.cloud.stream.kafka.bindings.clicks.producer.messageKeyExpression: headers['kafka_messageKey']

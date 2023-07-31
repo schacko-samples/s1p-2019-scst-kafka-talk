@@ -1,23 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>s1p2019.scst.kafka.talk</groupId>
+    <artifactId>s1p-2019-scst-kafka-talk</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <groupId>kafka.summit.london2022</groupId>
-    <artifactId>ksl-2022-spring-kafka-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <name>s1p-2019-scst-kafka-talk</name>
+    <description>Demo apps used for s1p 2010 ScSt Kafka talk</description>
+
     <modules>
-        <module>spring-kafka-app0</module>
-        <module>spring-kafka-app1</module>
-        <module>spring-kafka-app2</module>
-        <module>spring-kafka-app3</module>
-        <module>spring-kafka-app4</module>
-        <module>spring-kafka-app5</module>
-        <module>spring-kafka-app6</module>
-        <module>spring-integration-kafka-app</module>
-        <module>spring-cloud-stream-app1</module>
-        <module>spring-cloud-stream-app2</module>
-        <module>spring-cloud-stream-app3</module>
-        <module>spring-cloud-stream-app4</module>
+        <module>kafka-streams-word-count</module>
+        <module>user-clicks-per-region</module>
+        <module>user-clicks-region-producer</module>
+        <module>hello-streams-application</module>
     </modules>
+
 </project>

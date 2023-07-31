@@ -1,0 +1,27 @@
+spring.cloud.stream:
+  bindings:
+    process-in-0:
+      destination: words
+    process-out-0:
+      destination: counts
+  kafka:
+    streams:
+      binder:
+        configuration:
+         commit.interval.ms: 100
+         default:
+          key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+          value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+#Enable metrics
+management:
+  endpoint:
+    health:
+      show-details: ALWAYS
+  endpoints:
+    web:
+      exposure:
+        include: metrics,health
+#Enable logging to debug for spring kafka config
+logging:
+  level:
+    org.springframework.kafka.config: debug
